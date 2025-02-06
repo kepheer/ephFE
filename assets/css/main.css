@@ -1,0 +1,27 @@
+@import "./fonts.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope";
+  --font-serif: "Jonova";
+  --font-head: "Unbounded";
+  --font-accent: "Lepka";
+
+  --color-eph: oklch(65.44% 0.121 177.67);
+  --color-eph-black: oklch(8.23% 0.008 240.75);
+  --color-eph-white: oklch(99.45% 0.002 67.8);
+  --color-eph-gray-dark: oklch(44.59% 0 0);
+  --color-eph-gray-light: oklch(75.72% 0 0);
+  --color-eph-blue-dark: oklch(76.53% 0.131 194.77);
+  --color-eph-blue-light: oklch(86.91% 0.059 188.07);
+  --color-eph-red: oklch(49% 0.162 37.44);
+  --color-eph-green: oklch(64.03% 0.171 151.41);
+}
+
+body {
+  @apply bg-eph-black text-eph-white;
+}
+
+button {
+  @apply cursor-pointer;
+}
