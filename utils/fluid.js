@@ -1596,10 +1596,10 @@ function initFluid() {
     return radius;
   }
 
-  canvas.addEventListener("mousemove", (e) => {
+  window.addEventListener("mousemove", (e) => {
     let pointer = pointers[0];
-    let posX = scaleByPixelRatio(e.offsetX);
-    let posY = scaleByPixelRatio(e.offsetY);
+    let posX = scaleByPixelRatio(e.x);
+    let posY = scaleByPixelRatio(e.y);
     if (!pointer.down) {
       let pointer = pointers.find((p) => p.id == -1);
       if (pointer == null) {
@@ -1614,7 +1614,7 @@ function initFluid() {
     updatePointerUpData(pointers[0]);
   });
 
-  canvas.addEventListener("touchstart", (e) => {
+  window.addEventListener("touchstart", (e) => {
     e.preventDefault();
     const touches = e.targetTouches;
     while (touches.length >= pointers.length)
@@ -1626,7 +1626,7 @@ function initFluid() {
     }
   });
 
-  canvas.addEventListener(
+  window.addEventListener(
     "touchmove",
     (e) => {
       e.preventDefault();

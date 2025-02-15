@@ -1,8 +1,8 @@
 <template>
   <MainHeader />
-  <CanvasWrap />
+  <AnimationFluid class="-z-10" />
   <main class="z-10">
     <slot />
   </main>
-  <ModalLogin />
+  <MainFooter />
 </template>
