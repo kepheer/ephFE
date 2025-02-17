@@ -1,4 +1,12 @@
 <template>
+  <Head>
+    <Title>ЭФИР – музыкальный лейбл</Title>
+    <Meta
+      name="description"
+      content="С вас — искусство, с нас — всё остальное. Лейбл, который понимает, как много значит музыка."
+    />
+  </Head>
+
   <div class="px-5 sm:px-4 lg:px-16">
     <section class="h-screen">
       <div class="flex flex-col items-center text-center justify-center h-3/4">
