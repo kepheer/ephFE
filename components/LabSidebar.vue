@@ -31,7 +31,7 @@ const items = ref<Array<MenuItem>>([
     label: "Пользователи",
     items: [
       { label: "Регистрация", route: "/lab/register" },
-      { label: "Смена пароля", route: "/lab/changepw" },
+      { label: "Сброс пароля", route: "/lab/changepw" },
       { label: "Все пользователи", route: "/lab/users" },
     ],
   },
