@@ -2,7 +2,11 @@ import Aura from "@primevue/themes/Aura";
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
-  modules: ["@pinia/nuxt", "@primevue/nuxt-module"],
+  modules: [
+    "@pinia/nuxt",
+    "@primevue/nuxt-module",
+    "@formkit/auto-animate/nuxt",
+  ],
 
   app: {
     head: {
@@ -53,8 +57,8 @@ export default defineNuxtConfig({
           primary800: "#005B4D",
           primary900: "#00423A",
 
-          surface: "#FEFDFC",
-          background: "#FEFDFC",
+          surface: "#FAFAFA",
+          background: "#FAFAFA",
           textPrimary: "#010203",
           textSecondary: "#545454",
           border: "#B0B0B0",

@@ -1,69 +1,91 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, watch } from "vue";
 import { useUserStore } from "~/stores/user";
 import { navigateTo } from "#app";
+import { api } from "~/utils/axios.config";
 
 const props = defineProps({
   modelValue: {
-    type: Boolean,
+    type: Boolean as () => boolean,
     required: true,
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits<{
+  (e: "update:modelValue", value: boolean): void;
+}>();
 
-const visible = ref(props.modelValue);
+const visible = ref<boolean>(props.modelValue);
+const login = ref<string>("");
+const pw = ref<string>("");
+const errorMessage = ref<string>("");
 
 watch(
   () => props.modelValue,
-  (newValue) => {
+  (newValue: boolean) => {
     visible.value = newValue;
     errorMessage.value = "";
   }
 );
 
-const closeDialog = () => {
+const closeDialog = (): void => {
   emit("update:modelValue", false);
 };
 
 const userStore = useUserStore();
 
-const login = ref("");
-const pw = ref("");
-const errorMessage = ref("");
-
-const onInput = () => {
+const onInput = (): void => {
   errorMessage.value = "";
 };
 
-const handleLogin = async () => {
+const handleLogin = async (): Promise<void> => {
   try {
-    const response = await api.post("/auth/login", {
+    const response = await api.post<{
+      id: string;
+      login: string;
+      role: string;
+      token?: string;
+    }>("/auth/login", {
       login: login.value,
       password: pw.value,
     });
 
     if (response.status === 200) {
+      const { id, login: userLogin, role, token } = response.data;
+
+      if (process.client) {
+        const cookieToken = useCookie("token");
+        const cookieUserId = useCookie("userId");
+        const cookieLogin = useCookie("login");
+        const cookieRole = useCookie("role");
+
+        cookieToken.value = token || "";
+        cookieUserId.value = id;
+        cookieLogin.value = userLogin;
+        cookieRole.value = role;
+      }
+
       userStore.login({
-        id: response.data.id,
-        login: response.data.login,
-        role: response.data.role,
+        id,
+        login: userLogin,
+        role,
       });
+
       closeDialog();
       navigateTo("/lab/");
     }
-  } catch (error) {
+  } catch (error: any) {
     if (error.response) {
       const status = error.response.status;
-      if (status === 401 || status === 400 || status === 500) {
-        errorMessage.value = error.response.data.message;
+      if ([401, 400, 500].includes(status)) {
+        errorMessage.value = error.response.data.message || "Произошла ошибка";
       } else {
-        errorMessage.value = "Произошла неизвестная ошибка";
+        errorMessage.value = "Неизвестная ошибка";
       }
     } else if (error.request) {
       errorMessage.value = "Нет ответа от сервера";
     } else {
-      errorMessage.value = "Ошибка сервера: " + error.message;
+      errorMessage.value = `Ошибка сервера: ${error.message}`;
     }
   }
 };
@@ -128,10 +150,12 @@ const handleLogin = async () => {
         <label for="on_label">Логин</label>
       </FloatLabel>
       <FloatLabel variant="on" class="w-full">
-        <InputText
+        <Password
           id="userpw"
           v-model="pw"
           type="password"
+          :feedback="false"
+          toggleMask
           fluid
           required
           @input="onInput"

@@ -6,3 +6,9 @@
   </main>
   <MainFooter />
 </template>
+
+<style>
+body {
+  color: var(--color-eph-white);
+}
+</style>

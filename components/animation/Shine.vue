@@ -1,7 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 
-const logos = ref([
+interface Logo {
+  src: string;
+  alt: string;
+}
+
+const logos = ref<Logo[]>([
   { src: "/images/logos/yandex-music.svg", alt: "Яндекс Музыка" },
   { src: "/images/logos/vk-music.svg", alt: "VK Музыка" },
   { src: "/images/logos/zvuk.svg", alt: "ЗВУК" },

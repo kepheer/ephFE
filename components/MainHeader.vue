@@ -1,49 +1,40 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
-import { useUserStore } from "~/stores/user";
-import { api } from "../utils/axios.config";
+import { checkAuth } from "~/services/checkAuth";
 import { navigateTo } from "#app";
+import { useUserStore } from "~/stores/user";
 
-const isMenuOpen = ref(false);
-const modalVisible = ref(false);
+const isMenuOpen = ref<boolean>(false);
+const modalVisible = ref<boolean>(false);
 
-const toggleMenu = () => {
+const userStore = useUserStore();
+
+const toggleMenu = (): void => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-const checkAuth = async () => {
-  const userStore = useUserStore();
+const handleAuthCheck = async (): Promise<void> => {
+  await checkAuth({
+    on200: (): void => {
+      const role = userStore.getRole;
 
-  if (userStore.isAuthenticated) {
-    navigateTo("/lab/");
-    return;
-  }
-
-  try {
-    const response = await api.get("/auth/");
-    if (response.status === 200) {
-      userStore.login({
-        id: response.data.userId,
-        role: response.data.role,
-      });
-      navigateTo("/lab/");
-    }
-  } catch (error) {
-    if (error.response) {
-      const status = error.response.status;
-      if (status === 401) {
-        modalVisible.value = true;
-      } else if (status === 500) {
-        console.error(error.response.data.message);
+      if (role && ["artist", "manager", "root"].includes(role)) {
+        navigateTo("/lab/");
       } else {
-        console.error("Ошибка сервера");
+        console.warn("Недостаточно прав доступа");
+        modalVisible.value = true;
       }
-    } else if (error.request) {
-      console.error("Нет ответа от сервера");
-    } else {
-      console.error("Ошибка сервера:", error.message);
-    }
-  }
+    },
+    on401: (): void => {
+      modalVisible.value = true;
+    },
+    on403: (): void => {
+      modalVisible.value = true;
+    },
+    on500: (): void => {
+      console.error("Внутренняя ошибка сервера");
+    },
+  });
 };
 </script>
 
@@ -53,7 +44,7 @@ const checkAuth = async () => {
       <div class="flex h-16 items-center justify-between">
         <div class="md:flex md:items-center md:gap-12">
           <NuxtLink to="/" class="block">
-            <BrandLogo class="h-[1.6em] w-auto shadow" />
+            <BrandLogo class="h-[1.6em] w-auto" />
           </NuxtLink>
         </div>
         <div class="hidden md:block" id="navbar">
@@ -62,45 +53,13 @@ const checkAuth = async () => {
         <div class="flex items-center gap-4">
           <Button
             unstyled
-            @click="checkAuth"
+            @click="handleAuthCheck"
             class="flex gap-4 rounded-xl bg-linear-65 from-eph-500 via-eph-700 to-eph-800 px-5 py-2.5 text-md font-bold shadow transition duration-300 hover:bg-linear-145"
           >
             <span class="hidden lg:inline">Войти в личный кабинет</span>
             <span class="lg:hidden">Войти</span>
           </Button>
-          <button
-            @click="toggleMenu"
-            :aria-expanded="isMenuOpen.toString()"
-            aria-controls="navbar"
-            class="block md:hidden"
-          >
-            <svg
-              v-if="!isMenuOpen"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            <svg
-              v-else
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
+          <UiuxToogleBurger :isOpened="isMenuOpen" @toggle="toggleMenu" />
         </div>
       </div>
     </div>

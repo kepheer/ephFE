@@ -1,6 +1,11 @@
 <script setup>
 import { useUserStore } from "~/stores/user";
 
+definePageMeta({
+  layout: "lab",
+  middleware: "auth",
+});
+
 const userStore = useUserStore();
 </script>
 

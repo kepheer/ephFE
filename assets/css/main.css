@@ -17,6 +17,7 @@
   --color-eph-blue-light: oklch(86.91% 0.059 188.07);
   --color-eph-red: oklch(49% 0.162 37.44);
   --color-eph-green: oklch(64.03% 0.171 151.41);
+  --color-eph-violet: oklch(42.55% 0.1787 328.17);
 
   --color-eph-50: #c7f4ed;
   --color-eph-100: #a8e1db;
@@ -52,7 +53,19 @@
 }
 
 body {
-  @apply bg-eph-black text-eph-white overflow-x-hidden scroll-smooth;
+  @apply bg-eph-black text-eph-white overflow-x-hidden scroll-smooth antialiased;
+}
+
+.default {
+  @apply bg-eph-black text-eph-white;
+}
+
+.lab {
+  @apply bg-zinc-50 text-eph-black;
+}
+
+button {
+  @apply cursor-pointer;
 }
 
 .text-gradient {
