@@ -1,4 +1,5 @@
 @import "./fonts.css";
+@import "./background.css";
 @import "tailwindcss";
 
 @theme {
@@ -16,12 +17,75 @@
   --color-eph-blue-light: oklch(86.91% 0.059 188.07);
   --color-eph-red: oklch(49% 0.162 37.44);
   --color-eph-green: oklch(64.03% 0.171 151.41);
+  --color-eph-violet: oklch(42.55% 0.1787 328.17);
+
+  --color-eph-50: #c7f4ed;
+  --color-eph-100: #a8e1db;
+  --color-eph-200: #8adbca;
+  --color-eph-300: #6dc6b6;
+  --color-eph-400: #4eb4a1;
+  --color-eph-500: #00a890;
+  --color-eph-600: #008e78;
+  --color-eph-700: #007460;
+  --color-eph-800: #005b4d;
+  --color-eph-900: #00423a;
+
+  --animate-shine: shine 3s ease-in-out infinite;
+
+  @keyframes shine {
+    0%,
+    10% {
+      filter: brightness(1);
+      transform: skewX(0deg) skewY(0deg);
+      transform-origin: top;
+    }
+    60% {
+      filter: brightness(2);
+      transform: skewX(1deg) skewY(-1deg);
+      transform-origin: top;
+    }
+    100% {
+      filter: brightness(1);
+      transform: skewX(0deg) skewY(0deg);
+      transform-origin: top;
+    }
+  }
 }
 
 body {
+  @apply bg-eph-black text-eph-white overflow-x-hidden scroll-smooth antialiased;
+}
+
+.default {
   @apply bg-eph-black text-eph-white;
+}
+
+.lab {
+  @apply bg-zinc-50 text-eph-black;
 }
 
 button {
   @apply cursor-pointer;
+}
+
+.text-gradient {
+  @apply bg-linear-65 from-eph via-eph-700 to-eph-blue-dark bg-clip-text text-transparent;
+}
+
+.section-title {
+  @apply font-head font-extrabold text-2xl md:text-4xl lg:text-5xl;
+}
+
+/* Стили PrimeVue */
+
+.p-dialog-mask {
+  @apply backdrop-blur-sm;
+}
+
+.p-dialog {
+  @apply shadow-xl max-w-[80%];
+}
+
+.p-dialog-header {
+  @apply w-full flex justify-between items-center gap-8;
 }

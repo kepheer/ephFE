@@ -1,6 +1,12 @@
+import Aura from "@primevue/themes/Aura";
+
 export default defineNuxtConfig({
   devtools: { enabled: false },
-  modules: ["@pinia/nuxt"],
+  modules: [
+    "@pinia/nuxt",
+    "@primevue/nuxt-module",
+    "@formkit/auto-animate/nuxt",
+  ],
 
   app: {
     head: {
@@ -18,18 +24,51 @@ export default defineNuxtConfig({
           sizes: "180x180",
           href: "/apple-touch-icon.png",
         },
+        {
+          rel: "manifest",
+          href: "/site.webmanifest",
+        },
       ],
       meta: [{ name: "apple-mobile-web-app-title", content: "ЭФИР" }],
-      linkManifest: "/site.webmanifest",
     },
   },
 
   postcss: { plugins: { "@tailwindcss/postcss": {} } },
   css: ["~/assets/css/main.css"],
 
-  nitro: {
-    compatibility: {
-      date: "2025-02-04",
+  primevue: {
+    options: {
+      ripple: true,
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: false,
+        },
+        colors: {
+          primary: "#00A890",
+          primary50: "#C7F4ED",
+          primary100: "#A8E1DB",
+          primary200: "#8ADBCA",
+          primary300: "#6DC6B6",
+          primary400: "#4EB4A1",
+          primary500: "#00A890",
+          primary600: "#008E78",
+          primary700: "#007460",
+          primary800: "#005B4D",
+          primary900: "#00423A",
+
+          surface: "#FAFAFA",
+          background: "#FAFAFA",
+          textPrimary: "#010203",
+          textSecondary: "#545454",
+          border: "#B0B0B0",
+          divider: "#B0B0B0",
+
+          success: "#00CCCC",
+          warning: "#FFCC00",
+          danger: "#A83100",
+        },
+      },
     },
   },
 
