@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useUserStore } from "~/stores/user";
 import { ValidationService } from "~/services/validator";
-import ToogleSwitch from "primevue/toggleswitch";
 import { useToast } from "primevue/usetoast";
 import { changePassword } from "~/services/changePassword";
 
@@ -9,13 +9,21 @@ definePageMeta({
   layout: "lab",
 });
 
-const id = ref<string>("");
 const newpw = ref<string>("");
+const repeatpw = ref<string>("");
 const errorMessage = ref<string>("");
 const toast = useToast();
-const sended = ref<boolean>(false);
+const userStore = useUserStore();
 
 const validate = (): boolean => {
+  if (!newpw.value || !repeatpw.value) {
+    errorMessage.value = "Пароли не должны быть пустыми";
+    return false;
+  }
+  if (newpw.value !== repeatpw.value) {
+    errorMessage.value = "Пароли не совпадают";
+    return false;
+  }
   const passwordResult = ValidationService.validatePassword(newpw.value);
   if (!passwordResult.isValid) {
     errorMessage.value = passwordResult.message!;
@@ -29,12 +37,12 @@ const clear = (): void => {
 };
 
 const resetPasswordHandler = async (): Promise<void> => {
-  if (!id.value) {
-    errorMessage.value = "ID пользователя обязателен";
+  const id = userStore.getUserId;
+  if (!id) {
+    errorMessage.value = "Ошибка сервиса, попробуйте войти в аккаунт снова";
     return;
   }
-
-  changePassword(id.value, newpw.value, {
+  changePassword(id, newpw.value, {
     on200: (message) => {
       toast.add({
         severity: "success",
@@ -43,44 +51,20 @@ const resetPasswordHandler = async (): Promise<void> => {
         life: 3000,
       });
       clear();
-      id.value = "";
       newpw.value = "";
+      repeatpw.value = "";
     },
     on400: (error) => {
       errorMessage.value = error;
-      toast.add({
-        severity: "error",
-        summary: "Ошибка",
-        detail: error,
-        life: 5000,
-      });
     },
     on401: (error) => {
       errorMessage.value = error;
-      toast.add({
-        severity: "error",
-        summary: "Ошибка аутентификации",
-        detail: error,
-        life: 5000,
-      });
     },
     on404: (error) => {
       errorMessage.value = error;
-      toast.add({
-        severity: "error",
-        summary: "Ошибка",
-        detail: error,
-        life: 5000,
-      });
     },
     on500: (error) => {
       errorMessage.value = error;
-      toast.add({
-        severity: "error",
-        summary: "Ошибка сервера",
-        detail: error,
-        life: 5000,
-      });
     },
   });
 };
@@ -88,13 +72,10 @@ const resetPasswordHandler = async (): Promise<void> => {
 
 <template>
   <Head>
-    <Title>Сброс пароля / ЭФИР lab</Title>
+    <Title>Настройки / ЭФИР lab</Title>
   </Head>
   <section class="mx-6">
-    <h1 class="font-head font-medium text-xl">Сброс пароля</h1>
-    <p class="text-eph-gray-dark">
-      Заполните необходимые поля, чтобы сбросить пароль пользователя LAB
-    </p>
+    <h1 class="font-head font-medium text-xl">Сменить пароль</h1>
     <form id="reset" class="mt-2">
       <div class="flex flex-col lg:h-48">
         <div
@@ -113,37 +94,37 @@ const resetPasswordHandler = async (): Promise<void> => {
           <div
             class="flex flex-col gap-2 max-w-sm mx-auto mt-3 sm:order-1 md:order-last lg:order-1"
           >
-            <FloatLabel variant="on">
-              <InputText
-                id="userid"
-                v-model="id"
-                type="text"
-                autocomplete="off"
-                fluid
-                required
-                @input="clear"
-              />
-              <label for="on_label">ID</label>
-            </FloatLabel>
             <InputNewPassword
               :password="newpw"
               label="Новый пароль"
               @update:password="newpw = $event"
               @input="clear"
             />
+            <FloatLabel variant="on">
+              <Password
+                id="repeatpw"
+                v-model="repeatpw"
+                type="password"
+                autocomplete="off"
+                toggleMask
+                :feedback="false"
+                fluid
+                required
+                @input="clear"
+              />
+              <label for="on_label">Повторите пароль</label>
+            </FloatLabel>
           </div>
         </div>
       </div>
       <div
         class="flex flex-col sm:flex-row gap-4 pt-6 sm:justify-between sm:items-center"
       >
-        <div class="flex gap-4">
-          <ToogleSwitch v-model="sended" />
-          <span>Я отправил новый пароль пользователю</span>
-        </div>
+        <p class="text-eph-red text-sm text-center">
+          {{ errorMessage }}
+        </p>
         <Button
           type="submit"
-          :disabled="!sended"
           ripple
           label="Обновить пароль"
           @click.prevent="
@@ -151,14 +132,9 @@ const resetPasswordHandler = async (): Promise<void> => {
               resetPasswordHandler();
             }
           "
+          class="shrink-0"
         />
       </div>
-      <p
-        v-if="errorMessage"
-        class="text-eph-red text-sm w-full pt-2 text-center"
-      >
-        {{ errorMessage }}
-      </p>
     </form>
   </section>
   <Toast />
