@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { registrationService } from "@/services/register";
+import { ValidationService } from "@/services/validator";
 
 const login = ref<string>("");
 const pw = ref<string>("");
@@ -24,44 +25,30 @@ const rolesList: RolesList[] = [
   { value: "root", label: "Управляющий" },
 ];
 
-const passwordComplexity = new RegExp(
-  "^(?=.*[a-zA-Zа-яА-Я])(?=.*[A-ZА-Я])(?=.*\\d)(?=.*[!@#%^&*_=+\\-\\/\\\\]).{8,}$"
-);
-const loginPattern = /^[a-zA-Zа-яА-ЯёЁ0-9]+$/;
+const validateStep1 = (): boolean => {
+  const loginResult = ValidationService.validateLogin(login.value);
+  const passwordResult = ValidationService.validatePassword(pw.value);
 
-const validateLogin = (): boolean => {
-  if (!login.value) {
-    errorMessage.value = "Логин обязателен";
+  if (!loginResult.isValid) {
+    errorMessage.value = loginResult.message!;
     return false;
   }
-  if (!loginPattern.test(login.value)) {
-    errorMessage.value = "Логин содержит недопустимые символы";
-    return false;
-  }
-  if (login.value.length < 3 || login.value.length > 30) {
-    errorMessage.value = "Логин должен содержать от 3 до 30 символов";
+  if (!passwordResult.isValid) {
+    errorMessage.value = passwordResult.message!;
     return false;
   }
   return true;
 };
 
-const validatePassword = (): boolean => {
-  if (!pw.value) {
-    errorMessage.value = "Пароль обязателен";
-    return false;
-  }
-  if (!passwordComplexity.test(pw.value)) {
-    errorMessage.value =
-      "Пароль должен содержать минимум 8 символов, включая заглавные буквы, строчные буквы, цифры и специальные символы";
-    return false;
-  }
-  return true;
-};
-
-const validateStep1 = (): boolean => validateLogin() && validatePassword();
 const validateStep2 = (): boolean => !!role.value;
+
 const validateStep3 = (): boolean => {
-  if (!surname.value || !firstname.value || !contacts.value || role.value === "artist" && !artisticName.value) {
+  if (
+    !surname.value ||
+    !firstname.value ||
+    !contacts.value ||
+    (role.value === "artist" && !artisticName.value)
+  ) {
     errorMessage.value = "Пожалуйста, заполните все обязательные поля";
     return false;
   }
@@ -124,13 +111,9 @@ const clear = (): void => {
 <template>
   <Stepper value="1" linear>
     <StepList>
-      <Step value="1"
-        ><span class="hidden lg:block">Данные для входа</span></Step
-      >
+      <Step value="1"><span class="hidden lg:block">Данные для входа</span></Step>
       <Step value="2"><span class="hidden lg:block">Роль</span></Step>
-      <Step value="3"
-        ><span class="hidden lg:block">Контактная информация</span></Step
-      >
+      <Step value="3"><span class="hidden lg:block">Контактная информация</span></Step>
       <Step value="4"><span class="hidden lg:block">Подтверждение</span></Step>
     </StepList>
     <StepPanels>
@@ -154,7 +137,6 @@ const clear = (): void => {
           "
         />
       </StepPanel>
-
       <StepPanel
         v-slot="{ activateCallback }"
         value="2"
@@ -174,7 +156,6 @@ const clear = (): void => {
           @prev-step="activateCallback('1')"
         />
       </StepPanel>
-
       <StepPanel
         v-slot="{ activateCallback }"
         value="3"
@@ -203,7 +184,6 @@ const clear = (): void => {
           @prev-step="activateCallback('2')"
         />
       </StepPanel>
-
       <StepPanel
         v-slot="{ activateCallback }"
         value="4"

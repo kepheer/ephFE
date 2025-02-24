@@ -53,7 +53,7 @@ defineEmits(["prev-step", "register", "clear"]);
 <template>
   <div class="flex flex-col lg:h-48">
     <div
-      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col lg:flex-row justify-center items-center gap-2 font-medium text-center lg:text-left"
+      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl shadow-xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col lg:flex-row justify-center items-center gap-2 font-medium text-center lg:text-left"
     >
       <div
         class="flex items-center justify-center w-full lg:w-2/5 order-last font-light"

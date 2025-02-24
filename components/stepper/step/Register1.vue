@@ -23,7 +23,7 @@ const localPassword = defineModel<string>("pwmodel", { required: true });
 <template>
   <div class="flex flex-col lg:h-48">
     <div
-      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col sm:flex-row md:flex-col lg:flex-row justify-center items-center sm:gap-4 md:gap-0 lg:gap-4 font-medium"
+      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl shadow-xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col sm:flex-row md:flex-col lg:flex-row justify-center items-center sm:gap-4 md:gap-0 lg:gap-4 font-medium"
     >
       <div class="sm:max-w-3/5 sm:order-last md:order-1 lg:order-last">
         <p class="font-light">
@@ -34,9 +34,7 @@ const localPassword = defineModel<string>("pwmodel", { required: true });
           специальный знак.
         </p>
       </div>
-      <div
-        class="hidden lg:inline-flex h-full order-2"
-      >
+      <div class="hidden lg:inline-flex h-full order-2">
         <Divider layout="vertical" />
       </div>
       <div

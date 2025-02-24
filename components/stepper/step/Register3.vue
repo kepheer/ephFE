@@ -44,7 +44,7 @@ const localContacts = defineModel<string>("contacts", { required: true });
 <template>
   <div class="flex flex-col lg:h-48">
     <div
-      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col justify-center items-center gap-2 font-medium text-center"
+      class="bg-eph-white border-1 border-solid border-zinc-200 rounded-2xl shadow-xl p-6 sm:p-4 lg:p-2 flex-auto flex flex-col justify-center items-center gap-2 font-medium text-center"
     >
       <div class="flex justify-center items-center mb-2">
         <span class="font-light"
